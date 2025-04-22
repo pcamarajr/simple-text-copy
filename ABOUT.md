@@ -8,6 +8,7 @@ Designers and developers frequently need to extract text content from designs an
 - Text embedded in complex UI components
 - Formatted text in design tools like Figma
 - Text that includes unwanted formatting, line breaks, or special characters
+- Manual compilation of data into spreadsheets from various sources
 
 ## Solution
 Simple Text Copier addresses these challenges by providing:
@@ -17,6 +18,8 @@ Simple Text Copier addresses these challenges by providing:
 - **Format Cleaning**: Automatically strips unwanted formatting, preserving only the plain text
 - **Visual Feedback**: Shows what text has been copied through a subtle, non-intrusive notification
 - **Minimal Permissions**: Only requests necessary permissions for a lighter, more secure experience
+- **Enable/Disable Toggle**: Easily turn the extension on/off through the popup interface
+- **Clipboard Merge**: Combine newly copied text with existing clipboard content for spreadsheet workflows
 
 ### Figma Plugin
 - **Direct Text Extraction**: Extracts text from any Figma text layer or component
@@ -31,6 +34,8 @@ Simple Text Copier addresses these challenges by providing:
 - Uses Manifest V3 for enhanced security and performance
 - Content script-based implementation that injects minimal code into web pages
 - Event-driven architecture to handle keyboard and mouse interactions
+- Settings stored in Chrome's sync storage for persistence across devices
+- Popup interface for quick settings access without disrupting workflow
 
 ### Figma Plugin
 - Implements Figma's plugin API for seamless integration
@@ -59,6 +64,29 @@ Simple Text Copier addresses these challenges by providing:
 3. **Cross-Platform Workflow**:
    - Designers can seamlessly move text between Figma and other applications
    - Teams can maintain text consistency across design and implementation phases
+
+4. **Data Collection**:
+   - Collect multiple pieces of text into a spreadsheet-ready format
+   - Maintain organized columns with automatic tab separation between entries
+   - Create structured datasets from web content with minimal effort
+
+## Feature Spotlight: Clipboard Merge
+
+The clipboard merge functionality enhances data collection workflows:
+
+1. **How It Works**:
+   - When enabled, newly copied text is combined with existing clipboard content
+   - Format: "new text<separator>existing text"
+   - Default separator is a tab character, creating spreadsheet columns when pasted
+   
+2. **Benefits**:
+   - Eliminate manual copying and formatting when collecting data
+   - Create structured, column-based data directly from web pages
+   - Maintain context between related pieces of information
+   
+3. **Customization**:
+   - Configure the separator character in the options page
+   - Use tabs for spreadsheets, commas for CSV files, or any custom separator
 
 ## Development Workflow
 
@@ -101,6 +129,11 @@ npm run watch:figma
    - Support for additional design tools beyond Figma
    - Integration with note-taking apps and project management tools
 
+4. **Advanced Clipboard Management**:
+   - History of recently copied items
+   - Templates for common data structures
+   - Multiple clipboard merge patterns
+
 ## Development Approach
 The project follows a modular development approach with shared principles across both components:
 - Minimal resource footprint
@@ -110,4 +143,4 @@ The project follows a modular development approach with shared principles across
 - Unified build and development workflow through npm workspaces
 
 ## Conclusion
-Simple Text Copier represents a thoughtful solution to a common workflow friction point. By providing specialized tools for both web browsing and design environments, it creates a unified text extraction experience that saves time and reduces errors in the design-to-implementation pipeline. The monorepo architecture ensures a consistent development experience with simplified workflows for both maintenance and feature development. 
+Simple Text Copier represents a thoughtful solution to common workflow friction points. By providing specialized tools for both web browsing and design environments, it creates a unified text extraction experience that saves time and reduces errors in the design-to-implementation pipeline. The addition of enable/disable controls and clipboard merge functionality further enhances its utility for data collection and organization tasks. The monorepo architecture ensures a consistent development experience with simplified workflows for both maintenance and feature development. 

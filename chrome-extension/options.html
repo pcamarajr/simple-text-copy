@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Simple Text Copier - Options</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+    h1 {
+      color: #333;
+      font-size: 24px;
+    }
+    .option-group {
+      margin-bottom: 20px;
+      padding: 15px;
+      border-radius: 5px;
+      background-color: #f5f5f5;
+    }
+    .option-group h2 {
+      margin-top: 0;
+      font-size: 18px;
+    }
+    label {
+      display: block;
+      margin-bottom: 10px;
+    }
+    input[type="checkbox"] {
+      margin-right: 10px;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 8px;
+      box-sizing: border-box;
+      margin-top: 5px;
+    }
+    button {
+      background-color: #4285f4;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      font-size: 14px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #3367d6;
+    }
+    .status {
+      margin-top: 15px;
+      padding: 10px;
+      border-radius: 4px;
+      display: none;
+    }
+    .success {
+      background-color: #d4edda;
+      color: #155724;
+    }
+  </style>
+</head>
+<body>
+  <h1>Simple Text Copier Options</h1>
+  
+  <div class="option-group">
+    <h2>Extension Settings</h2>
+    <label>
+      <input type="checkbox" id="extensionEnabled" checked>
+      Enable extension (Alt+Click to copy text)
+    </label>
+  </div>
+
+  <div class="option-group">
+    <h2>Clipboard Options</h2>
+    <label>
+      <input type="checkbox" id="mergeClipboard">
+      Merge with current clipboard content when copying
+    </label>
+    <p>When enabled, the extension will combine the newly copied text with what was already in your clipboard.</p>
+    
+    <label for="separator">
+      Separator (used between merged content):
+      <input type="text" id="separator" value="\t" placeholder="\t (tab character)">
+    </label>
+    <p>Use <code>\t</code> for a tab character (makes two columns in spreadsheets).</p>
+  </div>
+
+  <button id="save">Save Options</button>
+  <div id="status" class="status"></div>
+
+  <script src="options.js"></script>
+</body>
+</html> 

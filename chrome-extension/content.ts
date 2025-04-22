@@ -4,9 +4,19 @@ console.log('Simple Text Copier extension loaded');
 // Track if Alt key is pressed
 let isAltKeyPressed = false;
 
+// Extension settings
+let settings = {
+  extensionEnabled: true,
+  mergeClipboard: false,
+  separator: '\t' // Default to tab character
+};
+
 // Function to initialize the extension
 function initExtension() {
     console.log('Initializing extension');
+    
+    // Load settings from storage
+    loadSettings();
     
     // Listen for keydown events to track Alt key
     document.addEventListener('keydown', function(e: KeyboardEvent) {
@@ -35,13 +45,59 @@ function initExtension() {
         // Watch for Figma interface updates using MutationObserver
         observeFigmaChanges();
     }
+
+    // Listen for settings changes
+    chrome.storage.onChanged.addListener((changes) => {
+        if (changes.extensionEnabled) {
+            settings.extensionEnabled = changes.extensionEnabled.newValue;
+            console.log('Extension enabled setting changed to:', settings.extensionEnabled);
+        }
+        if (changes.mergeClipboard) {
+            settings.mergeClipboard = changes.mergeClipboard.newValue;
+            console.log('Merge clipboard setting changed to:', settings.mergeClipboard);
+        }
+        if (changes.separator) {
+            // Handle escaped characters like '\t'
+            settings.separator = parseSeparator(changes.separator.newValue);
+            console.log('Separator setting changed to:', settings.separator);
+        }
+    });
+}
+
+// Load settings from Chrome storage
+function loadSettings() {
+    chrome.storage.sync.get(
+        {
+            extensionEnabled: true,
+            mergeClipboard: false,
+            separator: '\\t'
+        },
+        (items) => {
+            settings.extensionEnabled = items.extensionEnabled;
+            settings.mergeClipboard = items.mergeClipboard;
+            settings.separator = parseSeparator(items.separator);
+            console.log('Loaded settings:', settings);
+        }
+    );
+}
+
+// Parse the separator string, handling escaped characters
+function parseSeparator(separator: string): string {
+    // Handle escaped characters
+    if (separator === '\\t') {
+        return '\t';
+    } else if (separator === '\\n') {
+        return '\n';
+    } else {
+        return separator;
+    }
 }
 
 // Function to handle click events
 function handleClick(e: MouseEvent) {
     try {
-        // Only proceed if Alt key is pressed during click
-        if (!isAltKeyPressed) {
+        // Only proceed if Alt key is pressed during click and extension is enabled
+        if (!isAltKeyPressed || !settings.extensionEnabled) {
             return;
         }
 
@@ -59,7 +115,7 @@ function handleClick(e: MouseEvent) {
             if (target.tagName === 'INPUT' && target.getAttribute('type') === 'text') {
                 console.log('Clicked directly on input element');
                 const inputElement = target as HTMLInputElement;
-                copyToClipboard(inputElement.value);
+                copyTextWithMerge(inputElement.value);
                 e.stopPropagation(); // Try to prevent Figma from handling this event
                 return;
             }
@@ -68,7 +124,7 @@ function handleClick(e: MouseEvent) {
             const closestInput = findClosestInput(target);
             if (closestInput) {
                 console.log('Found closest input element:', closestInput);
-                copyToClipboard(closestInput.value);
+                copyTextWithMerge(closestInput.value);
                 e.stopPropagation(); // Try to prevent Figma from handling this event
                 return;
             }
@@ -77,24 +133,65 @@ function handleClick(e: MouseEvent) {
             const textFields = findFigmaTextFields();
             if (textFields.length > 0) {
                 console.log('Found Figma text fields:', textFields);
-                copyToClipboard(textFields[0].value);
+                copyTextWithMerge(textFields[0].value);
                 e.stopPropagation(); // Try to prevent Figma from handling this event
                 return;
             }
             
             // Default to copying text content if other methods fail
             console.log('Using fallback method - copying text content');
-            copyToClipboard(target.textContent?.trim() || '');
+            copyTextWithMerge(target.textContent?.trim() || '');
             e.stopPropagation(); // Try to prevent Figma from handling this event
         } else {
             // For regular web pages: Copy text from clicked element
             console.log('Regular webpage detected');
             const target = e.target as HTMLElement;
             console.log('Clicked element:', target.tagName);
-            copyToClipboard(target.textContent?.trim() || '');
+            copyTextWithMerge(target.textContent?.trim() || '');
         }
     } catch (error) {
         console.error('Error in Simple Text Copier extension:', error);
+    }
+}
+
+// Helper function for copying text with merge functionality
+async function copyTextWithMerge(text: string): Promise<void> {
+    if (!text) {
+        console.log('No text to copy');
+        return;
+    }
+    
+    console.log('Attempting to copy text:', text);
+    console.log('Merge setting:', settings.mergeClipboard);
+    
+    try {
+        if (settings.mergeClipboard) {
+            // Get the current clipboard content
+            let clipboardContent = '';
+            try {
+                clipboardContent = await navigator.clipboard.readText();
+                console.log('Current clipboard content:', clipboardContent);
+            } catch (err) {
+                console.error('Failed to read clipboard:', err);
+                // Continue with just the new text
+            }
+
+            // Only merge if there was something in the clipboard
+            if (clipboardContent) {
+                // Format: "new text<separator>old text"
+                text = text + settings.separator + clipboardContent;
+                console.log('Merged text:', text);
+            }
+        }
+        
+        // Copy the text (merged or not) to clipboard
+        await navigator.clipboard.writeText(text);
+        console.log('Text copied successfully');
+        showFeedback(`Copied: "${text.length > 50 ? text.substring(0, 47) + '...' : text}"`);
+    } catch (err) {
+        console.error('Failed to copy:', err);
+        // Fallback method
+        fallbackCopy(text);
     }
 }
 
@@ -183,28 +280,7 @@ function observeFigmaChanges() {
     observer.observe(document.body, config);
 }
 
-// Helper function to copy text
-function copyToClipboard(text: string): void {
-    if (!text) {
-        console.log('No text to copy');
-        return;
-    }
-    
-    console.log('Attempting to copy text:', text);
-    
-    navigator.clipboard.writeText(text)
-        .then(() => {
-            console.log('Text copied successfully');
-            showFeedback(`Copied: "${text.length > 50 ? text.substring(0, 47) + '...' : text}"`);
-        })
-        .catch(err => {
-            console.error('Failed to copy:', err);
-            // Fallback method for copying
-            fallbackCopy(text);
-        });
-}
-
-// Fallback copy method using execCommand (deprecated but sometimes works in sandboxed environments)
+// Helper function to copy text (fallback method)
 function fallbackCopy(text: string): void {
     try {
         console.log('Trying fallback copy method');

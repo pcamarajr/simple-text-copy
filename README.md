@@ -8,6 +8,8 @@ A lightweight Chrome extension and Figma plugin that copies plain text from the 
 - Figma Plugin: Copy text from any text layer or element in Figma
 - Shows visual feedback with the copied text
 - Extremely lightweight with minimal permissions
+- Easy enable/disable toggle in the extension popup
+- Clipboard merge functionality for spreadsheet workflows
 
 ## Chrome Extension
 
@@ -37,6 +39,29 @@ Hold the Alt key and click on any text element to copy its content.
 
 1. Hold Alt and click on any text element on a web page
 2. Text is automatically copied to clipboard
+
+#### Extension Settings
+
+Access settings by clicking on the extension icon in your toolbar:
+
+- **Enable/Disable**: Quickly toggle the extension on/off without uninstalling
+- **Merge with Clipboard**: Combine newly copied text with existing clipboard content
+- **Open Options**: Access additional settings like separator configuration
+
+#### Clipboard Merge Functionality
+
+For data collection and spreadsheet workflows:
+
+1. Enable "Merge with clipboard" in extension settings
+2. When you copy text with Alt+Click, it will be merged with existing clipboard content
+3. The default separator is a tab character (`\t`), which creates columns when pasted into spreadsheets
+4. You can customize the separator in the options page (e.g., use comma for CSV format)
+
+Example:
+- If "Some existing text" is in your clipboard
+- And you Alt+Click to copy "New text"
+- Your clipboard will contain: "New text[tab]Some existing text"
+- When pasted into a spreadsheet, it will appear as two separate columns
 
 ## Figma Plugin
 
@@ -89,6 +114,10 @@ redify/
 ├── chrome-extension/  # Chrome extension source code
 │   ├── content.ts     # Extension content script
 │   ├── manifest.json  # Extension manifest
+│   ├── options.html   # Extension options page
+│   ├── options.ts     # Options page functionality
+│   ├── popup.html     # Extension popup
+│   ├── popup.ts       # Popup functionality
 │   ├── package.json   # Extension-specific dependencies
 │   ├── tsconfig.json  # TypeScript configuration
 │   └── icons/         # Extension icons
@@ -96,7 +125,6 @@ redify/
     ├── code.ts        # Plugin code
     ├── ui.html        # Plugin UI
     ├── manifest.json  # Plugin manifest
-    ├── build.sh       # Build script (legacy)
     ├── package.json   # Plugin-specific dependencies 
     └── tsconfig.json  # TypeScript configuration
 ```

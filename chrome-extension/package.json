@@ -6,7 +6,7 @@
   "scripts": {
     "prebuild": "mkdir -p ../dist/chrome ../dist/chrome/icons",
     "build": "tsc && npm run copy-assets",
-    "copy-assets": "cp manifest.json ../dist/chrome/ && cp -r icons/* ../dist/chrome/icons/",
+    "copy-assets": "cp manifest.json options.html popup.html ../dist/chrome/ && cp -r icons/* ../dist/chrome/icons/",
     "watch": "tsc -w"
   },
   "devDependencies": {
