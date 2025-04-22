@@ -1,0 +1,22 @@
+{
+  "name": "simple-text-copier",
+  "version": "1.0.0",
+  "description": "Chrome extension and Figma plugin to copy plain text from Figma and web pages",
+  "private": true,
+  "workspaces": [
+    "chrome-extension",
+    "figma-plugin"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces",
+    "build:chrome": "npm run build --workspace=chrome-extension",
+    "build:figma": "npm run build --workspace=figma-plugin",
+    "watch:chrome": "npm run watch --workspace=chrome-extension",
+    "watch:figma": "npm run watch --workspace=figma-plugin",
+    "clean": "rm -rf dist/*",
+    "postinstall": "mkdir -p dist/chrome dist/figma"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+} 

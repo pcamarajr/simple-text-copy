@@ -1,0 +1,16 @@
+{
+  "name": "simple-text-copier-chrome",
+  "version": "1.0.0",
+  "description": "Chrome extension to copy plain text from web pages",
+  "main": "content.js",
+  "scripts": {
+    "prebuild": "mkdir -p ../dist/chrome ../dist/chrome/icons",
+    "build": "tsc && npm run copy-assets",
+    "copy-assets": "cp manifest.json ../dist/chrome/ && cp -r icons/* ../dist/chrome/icons/",
+    "watch": "tsc -w"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "@types/chrome": "^0.0.242"
+  }
+} 

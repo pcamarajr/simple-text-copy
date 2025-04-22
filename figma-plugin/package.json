@@ -1,0 +1,15 @@
+{
+  "name": "simple-text-copier-figma",
+  "version": "1.0.0",
+  "description": "Figma plugin to copy plain text from Figma designs",
+  "main": "code.js",
+  "scripts": {
+    "prebuild": "mkdir -p ../dist/figma",
+    "build": "tsc && npm run copy-assets",
+    "copy-assets": "cp manifest.json ui.html ../dist/figma/",
+    "watch": "tsc -w"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+} 
